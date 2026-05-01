@@ -1,6 +1,4 @@
-﻿using System.Dynamic;
-using System.Runtime.CompilerServices;
-using System.Text;
+﻿using System.Text;
 
 var repo = new InMemoryPersonRepository();
 var p1 = new Person { Id = Guid.NewGuid(), Age = 21, FullName = "test1", Height = 161.5, Status = SocialStatus.Single };
@@ -16,9 +14,9 @@ PersonFieldMask mask = new()
     FullName = true
 };
 Console.WriteLine("--- Basic ---");
-Print(p1, mask);
-Print(p2, mask);
-Print(p3, mask);
+PersonFieldMasksFunc.Print(p1, mask);
+PersonFieldMasksFunc.Print(p2, mask);
+PersonFieldMasksFunc.Print(p3, mask);
 
 PersonFieldMaskByte byteMask1 = new()
 {
@@ -31,19 +29,19 @@ PersonFieldMaskByte byteMask2 = new()
     Status = true
 };
 Console.WriteLine("---#1: Byte Mask (mask1) ---");
-BytePrint(p1, byteMask1);
-BytePrint(p2, byteMask1);
-BytePrint(p3, byteMask1);
+PersonFieldMasksFunc.BytePrint(p1, byteMask1);
+PersonFieldMasksFunc.BytePrint(p2, byteMask1);
+PersonFieldMasksFunc.BytePrint(p3, byteMask1);
 
 Console.WriteLine("---#2: 3 mask methods ---");
 Console.WriteLine("Base mask2");
-BytePrint(p1, byteMask2);
+PersonFieldMasksFunc.BytePrint(p1, byteMask2);
 Console.WriteLine("Union mask1 & mask2");
-BytePrint(p1, PersonFieldMasksFunc.UnionMask(byteMask1, byteMask2));
+PersonFieldMasksFunc.BytePrint(p1, PersonFieldMasksFunc.UnionMask(byteMask1, byteMask2));
 Console.WriteLine("Invert mask1");
-BytePrint(p1, PersonFieldMasksFunc.InvertMask(byteMask1));
+PersonFieldMasksFunc.BytePrint(p1, PersonFieldMasksFunc.InvertMask(byteMask1));
 Console.WriteLine("Invert mask2");
-BytePrint(p1, PersonFieldMasksFunc.InvertMask(byteMask2));
+PersonFieldMasksFunc.BytePrint(p1, PersonFieldMasksFunc.InvertMask(byteMask2));
 Console.WriteLine("Does byteMask 1 contain byteMask 2? :\t" +
     PersonFieldMasksFunc.Contains(byteMask1, byteMask2));
 var invertedMask1 = PersonFieldMasksFunc.InvertMask(byteMask1);
@@ -53,54 +51,18 @@ Console.WriteLine("Does INVERTED byteMask 1 contain byteMask 2? :\t" +
 Console.WriteLine("\n---#3: Copy on mask ---");
 Console.WriteLine("Same by STATUS \t Fields to Copy: AGE, HEIGHT");
 Console.WriteLine("Reference person:");
-BytePrint(p2, PersonFieldMasksFunc.InvertMask(new PersonFieldMaskByte()));
+PersonFieldMasksFunc.BytePrint(p2, PersonFieldMasksFunc.InvertMask(new PersonFieldMaskByte()));
 PersonFieldMaskByte maskSame = new() { Status = true };
 PersonFieldMaskByte maskCopy = new() { Age = true, Height = true };
 var copies = PersonFieldMasksFunc.CopySameByMask(repo.GetAll(), p2, maskSame, maskCopy);
 Console.WriteLine($"Found And Copied: {copies.Count}");
 foreach (var c in copies)
-    BytePrint(c, PersonFieldMasksFunc.InvertMask(new PersonFieldMaskByte()));
+    PersonFieldMasksFunc.BytePrint(c, PersonFieldMasksFunc.InvertMask(new PersonFieldMaskByte()));
 
-static void Print(Person person, PersonFieldMask mask)
+
+public static class PersonFieldMasksFunc
 {
-    StringBuilder res = new();
-    if (mask.Id)
-        res.Append("Id:\t" + person.Id + "\n");
-    if (mask.Age)
-        res.Append("Age:\t" + person.Age + "\n");
-    if (mask.FullName)
-        res.Append("Full Name:\t" + person.FullName + "\n");
-    if (mask.Height)
-        res.Append("Height:\t" + person.Height + "\n");
-    if (mask.Status)
-        res.Append("Status:\t" + person.Status + "\n");
-    Console.WriteLine(res.ToString());
-}
-static void BytePrint(Person person, PersonFieldMaskByte mask)
-{
-    StringBuilder res = new();
-
-    if (mask.Id)
-        res.Append("Id:\t" + person.Id + "\n");
-    if (mask.Age)
-        res.Append("Age:\t" + person.Age + "\n");
-    if (mask.FullName)
-        res.Append("Full Name:\t" + person.FullName + "\n");
-    if (mask.Height)
-        res.Append("Height:\t" + person.Height + "\n");
-    if (mask.Status)
-        res.Append("Status:\t" + person.Status + "\n");
-
-    Console.WriteLine(res.ToString());
-}
-
-public class PersonFieldMasksFunc
-{
-    public PersonFieldMasksFunc()
-    {
-    }
-
-    public static PersonFieldMaskByte UnionMask(PersonFieldMaskByte a, PersonFieldMaskByte b) { return new PersonFieldMaskByte { value = a.value | b.value }; }
+    public static PersonFieldMaskByte UnionMask(PersonFieldMaskByte a, PersonFieldMaskByte b) { return new PersonFieldMaskByte { value = (byte)(a.value | b.value) }; }
     public static bool Contains(PersonFieldMaskByte a, PersonFieldMaskByte b)
     {
         return (a.value & b.value) == b.value;
@@ -108,7 +70,7 @@ public class PersonFieldMasksFunc
     public static PersonFieldMaskByte InvertMask(PersonFieldMaskByte a)
     {
         var mask = a;
-        mask.value = ~a.value;
+        mask.value = (byte)~a.value;
         return mask;
     }
     public static List<Person> CopySameByMask(List<Person> repo, Person reference, PersonFieldMaskByte maskSame, PersonFieldMaskByte maskToCopy)
@@ -148,29 +110,72 @@ public class PersonFieldMasksFunc
         if (mask.Status && a.Status != b.Status) return false;
         return true;
     }
+
+
+    public static void BytePrint(Person person, PersonFieldMaskByte mask)
+    {
+        StringBuilder res = new();
+        if (mask.Id)
+            res.Append("Id:\t" + person.Id + "\n");
+        if (mask.Age)
+            res.Append("Age:\t" + person.Age + "\n");
+        if (mask.FullName)
+            res.Append("Full Name:\t" + person.FullName + "\n");
+        if (mask.Height)
+            res.Append("Height:\t" + person.Height + "\n");
+        if (mask.Status)
+            res.Append("Status:\t" + person.Status + "\n");
+        var output = res.ToString();
+        Console.WriteLine(output);
+    }
+
+    public static void Print(Person person, PersonFieldMask? mask = null)
+    {
+
+        mask ??= new PersonFieldMask
+        {
+            Status = true,
+            Id = true,
+            Age = true,
+            Height = true,
+            FullName = true
+        };
+        StringBuilder res = new();
+        if (mask.Id)
+            res.Append("Id:\t" + person.Id + "\n");
+        if (mask.Age)
+            res.Append("Age:\t" + person.Age + "\n");
+        if (mask.FullName)
+            res.Append("Full Name:\t" + person.FullName + "\n");
+        if (mask.Height)
+            res.Append("Height:\t" + person.Height + "\n");
+        if (mask.Status)
+            res.Append("Status:\t" + person.Status + "\n");
+        var output = res.ToString();
+        Console.WriteLine(output);
+    }
 }
 
 public record struct PersonFieldMaskByte
 {
-    public int value;
+    public byte value;
     public readonly bool Get(PersonField field)
     {
         int idIdx = (int)field;
-        int v = 1 << idIdx;
-        int valueWithOnlyRequiredBit = value & v;
-        return valueWithOnlyRequiredBit != 0;
+        byte v = (byte)(1 << idIdx);
+        return (value & v) != 0;
     }
     public void Set(PersonField field, bool val)
     {
         int idIdx = (int)field;
-        int v = 1 << idIdx;
+        byte v = (byte)(1 << idIdx);
         if (val == true)
         {
-            value |= v;
+            value = (byte)(value | v);
         }
         else
         {
-            value = value & (~v);
+            value = (byte)(value & (byte)~v);
         }
     }
     public bool Id
@@ -222,6 +227,7 @@ public class Person
     public required double Height { get; set; }
     public required SocialStatus Status { get; set; }
 }
+
 public enum SocialStatus
 {
     Underage,

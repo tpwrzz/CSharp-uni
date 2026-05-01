@@ -8,4 +8,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\lab1-fieldMask\lab1-fieldMask.csproj" />
+  </ItemGroup>
+
 </Project>
