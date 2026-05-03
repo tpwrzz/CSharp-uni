@@ -1,0 +1,23 @@
+﻿{
+  Address: Addr,
+  Rating: 5.0,
+  DirectorName: CEO,
+  Projects: [
+    {
+      Id: Guid_1,
+      Name: SecretProj,
+      Description: Hidden stuff,
+      Status: Active,
+      IsSecret: true
+    }
+  ],
+  Persons: [
+    {
+      Id: Guid_2,
+      FullName: Agent,
+      Level: Lead,
+      YearsOfExperience: 10,
+      ProjectId: Guid_1
+    }
+  ]
+}

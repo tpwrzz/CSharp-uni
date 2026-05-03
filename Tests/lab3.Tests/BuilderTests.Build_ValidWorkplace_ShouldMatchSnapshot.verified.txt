@@ -1,0 +1,23 @@
+﻿{
+  Address: Test Address,
+  Rating: 4.5,
+  DirectorName: John,
+  Projects: [
+    {
+      Id: Guid_1,
+      Name: Proj,
+      Description: Desc,
+      Status: Active,
+      IsSecret: false
+    }
+  ],
+  Persons: [
+    {
+      Id: Guid_2,
+      FullName: Alice,
+      Level: Senior,
+      YearsOfExperience: 5,
+      ProjectId: Guid_1
+    }
+  ]
+}

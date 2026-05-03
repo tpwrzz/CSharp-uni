@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="lab1-fieldMask/lab1-fieldMask.csproj" />
   <Project Path="lab2-pipeline/lab2-pipeline.csproj" />
+  <Project Path="lab3-builder/lab3-builder.csproj" Id="198be6de-6cd4-4fc5-9415-9a8e1721dec9" />
+  <Project Path="lab4-properties/lab4-properties.csproj" Id="f73f7925-d20b-4870-8c74-635e8c64208a" />
   <Project Path="Tests/Tests.csproj" Id="3c393aeb-c145-4b71-8e8e-23e265205315" />
 </Solution>
