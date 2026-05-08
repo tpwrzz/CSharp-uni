@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.NetworkInformation;
-using System.Runtime.CompilerServices;
-using System.Text;
-using static System.Net.Mime.MediaTypeNames;
-
-namespace lab2_pipeline
+﻿namespace lab2_pipeline
 {
     public static class Functions
     {

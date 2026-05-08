@@ -1,5 +1,4 @@
-﻿using lab1_fieldMask.lab1.Tests;
-namespace lab1_fieldMask.lab1.Tests;
+﻿namespace lab1_fieldMask.lab1.Tests;
 
 public class BasicTests : IClassFixture<PersonTestFixture>
 {

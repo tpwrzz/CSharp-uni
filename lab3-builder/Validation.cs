@@ -1,6 +1,4 @@
-﻿using static lab3_builder.Models;
-
-namespace lab3_builder
+﻿namespace lab3_builder
 {
 
     public static class Validator
